@@ -1,0 +1,353 @@
+menu "Application Configuration"
+    config DEVICE_IDENTIFICATION
+        string "Device Identification"
+        default "entrance"
+        help
+            Identificaiton name used to differentiate the measurers.
+            Note: Only ASCII characters are supported, max 14 symbols.
+
+    menu "MQTT Configuration"
+        config MQTT_BROKER_URL
+            string "Broker URL"
+            default "mqtt://mqtt.eclipseprojects.io"
+            help
+                URL of the broker to connect to.
+        
+        config MQTT_USE_WSS
+            bool "Use WSS"
+            default y
+            help
+                Use WSS for MQTT transport
+        
+        config MQTT_MAX_INIT_TIME_MS
+            int "Maximum Initialization Time"
+            default 60000
+            help
+                Maximum amount of time which may be used for MQTT initialization.
+        config MQTT_DATA_TOPIC
+            string "MQTT Data Topic"
+            default "people_counter/data"
+            help
+                Topic that is used to send the data to.
+        config MQTT_NOTIFICATIONS_TOPIC
+            string "MQTT Notifications Topic"
+            default  "people_counter/notifications"
+            help
+                Topic that is used to send the notifications to.
+        menu "MQTT Client Credentials"
+            config MQTT_USERNAME
+                string "MQTT Username"
+                default "placeholder"
+                help
+                    Username to use for MQTT connection.
+
+            menu "MQTT Authentication"
+                config MQTT_PASSWORD
+                    string "MQTT Password"
+                    default "placeholder"
+                    help
+                        Password to use for MQTT connection.
+            endmenu
+        endmenu
+
+        menu "MQTT Last Will, Testament"
+            config MQTT_LWT_TOPIC
+                string "LWT Topic"
+                default "placeholder"
+                help
+                    Topic of the LWT message.
+
+            config MQTT_LWT_MSG
+                string "LWT Message"
+                default "placeholder"
+                help
+                    Content of the LWT message.
+        endmenu
+        menu "MQTT Session"
+        endmenu
+
+        menu "MQTT Network"
+            config MQTT_ENABLE_RECONNECT
+                bool "MQTT Enable Reconnect"
+                default y
+                help
+                    Enable automatic reconnect of the MQTT client.
+            config MQTT_RCNN_TIMEOUT_MS
+                int "MQTT Reconnect Timeout (ms)"
+                default 10000
+                help
+                    Timeout for the automatic reconnect feature.
+            config MQTT_TIMEOUT_MS
+                int "MQTT Timeout (ms)"
+                default 10000
+                help
+                    Timeout time, after which all network operations will abort (if unsuccessful).
+            config MQTT_REFRESH_CON_AFTER_MS
+                int "MQTT Refresh Connection After (ms)"
+                default 1000
+                help
+                    Time after which the MQTT connection will be refreshed.
+        endmenu
+
+        menu "MQTT Task"
+            config MQTT_TASK_PRIORITY
+                int "MQTT Task Priority"
+                default 5
+                help
+                    Sets the freeRTOS MQTT task priority.
+        endmenu
+
+        menu "MQTT Buffer"
+        
+        endmenu
+
+        menu "MQTT Outbox"
+
+        endmenu
+    endmenu
+
+    menu "WiFi Configuration"
+        config WIFI_SSID
+            string "WiFi SSID"
+            default "myssid"
+            help
+                SSID (network name) of the network to connect to.
+
+        config WIFI_WPA_EAP_NETWORK
+            bool "WPA-EAP Network"
+            default n
+            help
+                Connect to a WPA-EAP protected network.
+                Note: Requires identity, username, password credentials
+        
+        menu "WPA-EAP Credentials"
+            depends on WIFI_WPA_EAP_NETWORK
+
+            config WPA_EAP_IDENTITY
+                string "WPA-EAP Identity"
+                default "placeholder"
+                help
+                    WPA-EAP identity to use.
+            config WPA_EAP_USERNAME
+                string "WPA-EAP Username"
+                default "placeholder"
+                help
+                    WPA-EAP username to use.
+            config WPA_EAP_PASSWORD
+                string "WPA-EAP Password"
+                default "placeholder"
+                help
+                    WPA-EAP password to use.
+        endmenu
+        
+        config WIFI_PASSWORD
+            depends on !WIFI_WPA_EAP_NETWORK
+            string "WiFi Password"
+            default "mypassword"
+            help
+                WiFi password (WPA or WPA2) for the example to use.
+                Can be left blank if the network has no security set.
+
+        config WIFI_MAX_INIT_TIME_MS
+            int "Maximum Initialization Time"
+            default 60000
+            help
+                Maximum amount of time which may be used for WiFi initialization.
+    
+        config WIFI_MAX_RETRY
+            int "Maximum retry"
+            default 6
+            help
+                Set the Maximum retry to avoid station reconnecting to the AP unlimited,
+                in case the AP is really inexistent.
+    
+        choice WIFI_SCAN_METHOD
+            prompt "WiFi Scan Method"
+            default WIFI_SCAN_FAST
+            help
+                WiFi scan method:
+
+                If "Fast" is selected, scan will end after find SSID match AP.
+    
+                If "All Channel" is selected, scan will end after scan all the channel.
+    
+            config WIFI_SCAN_FAST
+                bool "Fast"
+            config WIFI_SCAN_ALL_CHANNEL
+                bool "All Channel"
+        endchoice
+
+        config WIFI_SCAN_RSSI_THRESHOLD
+            int "WiFi minimum rssi"
+            range -127 0
+
+            default -127
+            help
+                The minimum rssi to accept in the scan mode.
+
+        choice WIFI_SCAN_AUTH_MODE_THRESHOLD
+            prompt "WiFi Scan auth mode threshold"
+            default WIFI_SCAN_AUTH_OPEN
+            help
+                The weakest authmode to accept in the scan mode.
+
+            config WIFI_SCAN_AUTH_OPEN
+                bool "OPEN"
+            config WIFI_SCAN_AUTH_WEP
+                bool "WEP"
+            config WIFI_SCAN_AUTH_WPA_PSK
+                bool "WPA PSK"
+            config WIFI_SCAN_AUTH_WPA2_PSK
+                bool "WPA2 PSK"
+            config WIFI_SCAN_AUTH_WPA_WPA2_PSK
+                bool "WPA WPA2 PSK"
+            config WIFI_SCAN_AUTH_WPA2_ENTERPRISE
+                bool "WPA2 ENTERPRISE"
+            config WIFI_SCAN_AUTH_WPA3_PSK
+                bool "WPA3 PSK"
+            config WIFI_SCAN_AUTH_WPA2_WPA3_PSK
+                bool "WPA2 WPA3 PSK"
+            config WIFI_SCAN_AUTH_WAPI_PSK
+                bool "WAPI PSK"
+        endchoice
+        
+    
+        choice WIFI_CONNECT_AP_SORT_METHOD
+            prompt "WiFi Connect AP Sort Method"
+            default WIFI_CONNECT_AP_BY_SIGNAL
+            help
+                WiFi AP sort method:
+    
+                If "Signal" is selected, Sort matched APs in scan list by RSSI.
+    
+                If "Security" is selected, Sort matched APs in scan list by security mode.
+    
+            config WIFI_CONNECT_AP_BY_SIGNAL
+                bool "Signal"
+            config WIFI_CONNECT_AP_BY_SECURITY
+                bool "Security"
+        endchoice
+    endmenu
+    
+    menu "Sensors Configuration"
+        config HC_SRF05_ENTRY_TRIGGER_PIN
+            int "HC-SRF05 Trigger Pin"
+            default 18
+            help
+                Pin number used as the trigger pin of the entry.
+        config HC_SRF05_ENTRY_ECHO_PIN
+            int "HC-SRF05 Echo Pin"
+            default 19
+            help
+                Pin number used as the echo pin of the entry sensor.
+
+        config HC_SRF05_EXIT_TRIGGER_PIN
+            int "HC-SRF05 Trigger Pin"
+            default 22
+            help
+                Pin number used as the trigger pin of the exit sensor.
+        config HC_SRF05_EXIT_ECHO_PIN
+            int "HC-SRF05 Echo Pin"
+            default 23
+            help
+                Pin number used as the echo pin of the exit sensor.
+    endmenu
+    
+    menu "Power Control Configuration"
+        menu "Battery Control Configuration"
+            config BATTERY_SENSE_CONTROL_PIN
+                int "Analogue Sense Enable Pin"
+                default 32
+                help
+                    Pin used as the control pin that controls the transistor which enables the battery sense functionallity.
+                    Note: Should not be used by any other application.
+            config BATTERY_SENSE_PERIODICITY
+                int "Battery Sense Periodicity"
+                default 1800000
+                help
+                    How often is the battery voltage measured in seconds.
+            menu "Battery Levels Scheme"
+                config BATTERY_LEVEL_HIGH
+                    int "Battery High Level Value (mV)"
+                    default 4200
+                    help
+                        Battery voltage level that is considered to be high.
+                config BATTERY_LEVEL_MEDIUM
+                    int "Battery Medium Level Value (mV)"
+                    default 3780
+                    help
+                        Battery voltage level that is considered to be medium.
+                config BATTERY_LEVEL_LOW
+                    int "Battery Low Level Value (mV)"
+                    default 3600
+                    help
+                        Battery voltage level that is considered to be low.
+                config BATTERY_LEVEL_CRITICAL
+                    int "Battery Critical Level Value (mV)"
+                    default 3250
+                    help
+                        Battery voltage level that is considered to be critical.
+                config BATTERY_LEVEL_SHUTDOWN
+                    int "Battery Shutdown Level Value (mV)"
+                    default 3250
+                    help
+                        Battery voltage level that triggers the shutdown.
+            endmenu
+            config BATTERY_SENSE_AVERAGE_MEASURE
+                bool "Average Measurements"
+                default y
+                help
+                    Performing multiple measurements and evaluating their average.
+            config BATTERY_SENSE_MAX_MEASUREMENTS
+                depends on BATTERY_SENSE_AVERAGE_MEASURE
+                int "Maximum Measurements"
+                default 10
+                help
+                    Maximum number of measurements performed for averaging.
+            choice BATTERY_SENSE_PIN
+                prompt "Analogue Sense Pin"
+                default BATTERY_SENSE_PIN_35
+                help
+                    Analogue Sense Pin:
+                    
+                    Using the ADC 1 channels only, since the ADC 2 isn't accessible while WiFi is used.
+                config BATTERY_SENSE_PIN_VP
+                    bool "VP Pin"
+                config BATTERY_SENSE_PIN_VN
+                    bool "VN Pin"
+                config BATTERY_SENSE_PIN_34
+                    bool "34 Pin"
+                config BATTERY_SENSE_PIN_35
+                    bool "35 Pin"
+                config BATTERY_SENSE_PIN_32
+                    bool "32 Pin"
+                config BATTERY_SENSE_PIN_33
+                    bool "33 Pin"
+                config BATTERY_SENSE_PIN_25
+                    bool "25 Pin"
+            endchoice
+
+
+        endmenu
+    endmenu
+
+    menu "Time Synchronization Configuration"
+        config TIME_SYNC_NTP_SERVER
+            string "NTP Server Domain"
+            default "mmo1.ntp.se"
+            help
+                Address of the NTP server to use for time synchronisation.
+
+        config TIME_SYNC_WAIT_FOR_SYNC
+            bool "Wait For NTP Server Response"
+            default y
+            help
+                Configures whether the SNTP client will wait for the NTP server response.
+        config TIME_SYNC_WAIT_TIMEOUT_MS
+            depends on TIME_SYNC_WAIT_FOR_SYNC
+            int "Timeout Time For Response Waiting (mS)"
+            default 1000
+            help
+                Specifies the maximum time to wait for NTP server response (in mS).
+    endmenu
+endmenu
