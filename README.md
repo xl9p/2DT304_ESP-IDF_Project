@@ -2,6 +2,9 @@
 
 **Because of the way we separated the work we didn't use any colloborative tools to synchronize the work. Therefore, there will be no commit history.**
 
+## About
+This repository contains code for the hardware part of the project (ESP32). The web portion of the code can be found at https://github.com/Nocxium/People_Counter_WS
+
 ## Code Structure
 
 Here is a brief overview of the project's directory structure:
